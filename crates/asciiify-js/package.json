@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomerramk/asciiify"
+    "url": "git+https://github.com/tomerramk/asciiify.git"
   },
   "napi": {
     "name": "asciiify",
