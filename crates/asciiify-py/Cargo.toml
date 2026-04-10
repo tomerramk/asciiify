@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 asciiify-core = { path = "../asciiify-core" }
-pyo3 = { version = "0.24", features = ["extension-module"] }
+pyo3 = { version = "0.24", features = ["extension-module", "generate-import-lib"] }
