@@ -1,5 +1,5 @@
 {
-  "name": "asciiify",
+  "name": "@tomerramk/asciiify",
   "version": "0.1.0",
   "author": "Tomer Ramkovich",
   "description": "Convert images and video to ASCII art",
