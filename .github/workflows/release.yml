@@ -92,14 +92,7 @@ jobs:
         with:
           working-directory: crates/asciiify-py
           target: ${{ matrix.target }}
-          # Explicit interpreter paths inside manylinux images so maturin
-          # can find python interpreters when running in Docker.
-          args: >-
-            --release --out ../../dist
-            -i /opt/python/cp311-cp311/bin/python3.11
-            -i /opt/python/cp310-cp310/bin/python3.10
-            -i /opt/python/cp39-cp39/bin/python3.9
-            -i /opt/python/cp38-cp38/bin/python3.8
+          args: --release --out ../../dist
           manylinux: auto
 
       - uses: actions/upload-artifact@v4
