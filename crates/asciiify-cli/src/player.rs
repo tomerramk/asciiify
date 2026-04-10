@@ -50,8 +50,7 @@ fn start_audio(path: &str) -> Option<std::thread::JoinHandle<()>> {
         let dst_format = ffmpeg_next::format::Sample::F32(SampleType::Packed);
 
         let mut resampler = match resampling::Context::get(
-            src_format, src_layout, rate,
-            dst_format, src_layout, rate,
+            src_format, src_layout, rate, dst_format, src_layout, rate,
         ) {
             Ok(r) => r,
             Err(_) => return,
@@ -82,7 +81,11 @@ fn start_audio(path: &str) -> Option<std::thread::JoinHandle<()>> {
                 }
                 // Append chunk to sink without waiting for it to finish
                 if chunk.len() >= CHUNK_SAMPLES * channels as usize {
-                    sink.append(SamplesBuffer::new(channels, rate, chunk.drain(..).collect::<Vec<_>>()));
+                    sink.append(SamplesBuffer::new(
+                        channels,
+                        rate,
+                        chunk.drain(..).collect::<Vec<_>>(),
+                    ));
                 }
                 continue;
             }
@@ -123,7 +126,11 @@ pub fn play_video(
     // Peek at fps before spawning the decode thread
     let fps = {
         let probe = asciiify_core::extract_frames(path)?;
-        if target_fps > 0.0 { target_fps } else { probe.fps() }
+        if target_fps > 0.0 {
+            target_fps
+        } else {
+            probe.fps()
+        }
     };
     let frame_duration = Duration::from_secs_f64(1.0 / fps);
 
@@ -147,7 +154,10 @@ pub fn play_video(
     std::thread::spawn(move || {
         let frames = match asciiify_core::extract_frames(&path_bg) {
             Ok(f) => f,
-            Err(e) => { let _ = tx.send(Err(e)); return; }
+            Err(e) => {
+                let _ = tx.send(Err(e));
+                return;
+            }
         };
         for frame_result in frames {
             let item = frame_result.and_then(|img| asciiify_core::convert_image(&img, &opts_bg));

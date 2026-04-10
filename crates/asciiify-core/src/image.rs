@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use image::{DynamicImage, GrayImage, imageops::FilterType};
+use image::{imageops::FilterType, DynamicImage, GrayImage};
 
 use crate::error::ConvertError;
 use crate::options::{ConvertOptions, OutputMode};
@@ -26,10 +26,7 @@ pub fn load_image_from_bytes(data: &[u8]) -> Result<DynamicImage, ConvertError> 
 /// - Ascii: `(cols, rows)` — 1 pixel per character
 /// - HalfBlock: `(cols, rows * 2)` — 2 vertical pixels per character
 /// - Braille: `(cols * 2, rows * 4)` — 2×4 pixels per character
-pub fn prepare_image(
-    img: &DynamicImage,
-    opts: &ConvertOptions,
-) -> GrayImage {
+pub fn prepare_image(img: &DynamicImage, opts: &ConvertOptions) -> GrayImage {
     let (cols, rows) = opts.resolve_dimensions(img.width(), img.height());
 
     let (px_w, px_h) = match opts.mode {
@@ -48,9 +45,7 @@ mod tests {
     use image::{GrayImage, Luma};
 
     fn make_test_image(w: u32, h: u32) -> DynamicImage {
-        DynamicImage::ImageLuma8(GrayImage::from_fn(w, h, |x, _| {
-            Luma([(x % 256) as u8])
-        }))
+        DynamicImage::ImageLuma8(GrayImage::from_fn(w, h, |x, _| Luma([(x % 256) as u8])))
     }
 
     #[test]

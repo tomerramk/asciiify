@@ -45,7 +45,10 @@ pub unsafe extern "C" fn asciiify_convert_file(
     let charset_str = if charset.is_null() {
         None
     } else {
-        unsafe { CStr::from_ptr(charset) }.to_str().ok().map(String::from)
+        unsafe { CStr::from_ptr(charset) }
+            .to_str()
+            .ok()
+            .map(String::from)
     };
 
     let opts = ConvertOptions {
@@ -57,7 +60,9 @@ pub unsafe extern "C" fn asciiify_convert_file(
     };
 
     match asciiify_core::convert_image_file(path, &opts) {
-        Ok(result) => CString::new(result).map(|s| s.into_raw()).unwrap_or(ptr::null_mut()),
+        Ok(result) => CString::new(result)
+            .map(|s| s.into_raw())
+            .unwrap_or(ptr::null_mut()),
         Err(_) => ptr::null_mut(),
     }
 }
@@ -97,7 +102,10 @@ pub unsafe extern "C" fn asciiify_convert_bytes(
     let charset_str = if charset.is_null() {
         None
     } else {
-        unsafe { CStr::from_ptr(charset) }.to_str().ok().map(String::from)
+        unsafe { CStr::from_ptr(charset) }
+            .to_str()
+            .ok()
+            .map(String::from)
     };
 
     let opts = ConvertOptions {
@@ -109,7 +117,9 @@ pub unsafe extern "C" fn asciiify_convert_bytes(
     };
 
     match asciiify_core::convert_image_bytes(bytes, &opts) {
-        Ok(result) => CString::new(result).map(|s| s.into_raw()).unwrap_or(ptr::null_mut()),
+        Ok(result) => CString::new(result)
+            .map(|s| s.into_raw())
+            .unwrap_or(ptr::null_mut()),
         Err(_) => ptr::null_mut(),
     }
 }
@@ -161,7 +171,15 @@ mod tests {
     fn convert_bytes_invalid_data_returns_null() {
         let data = b"not an image";
         let result = unsafe {
-            asciiify_convert_bytes(data.as_ptr(), data.len(), ptr::null(), 40, 20, false, ptr::null())
+            asciiify_convert_bytes(
+                data.as_ptr(),
+                data.len(),
+                ptr::null(),
+                40,
+                20,
+                false,
+                ptr::null(),
+            )
         };
         assert!(result.is_null());
     }
@@ -169,15 +187,24 @@ mod tests {
     #[test]
     fn convert_bytes_valid_png() {
         // Create a minimal valid PNG in memory
-        let img = image::DynamicImage::ImageLuma8(
-            image::GrayImage::from_fn(4, 4, |_, _| image::Luma([128u8])),
-        );
+        let img = image::DynamicImage::ImageLuma8(image::GrayImage::from_fn(4, 4, |_, _| {
+            image::Luma([128u8])
+        }));
         let mut buf = Vec::new();
-        img.write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png).unwrap();
+        img.write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png)
+            .unwrap();
 
         let mode = CString::new("ascii").unwrap();
         let result = unsafe {
-            asciiify_convert_bytes(buf.as_ptr(), buf.len(), mode.as_ptr(), 4, 2, false, ptr::null())
+            asciiify_convert_bytes(
+                buf.as_ptr(),
+                buf.len(),
+                mode.as_ptr(),
+                4,
+                2,
+                false,
+                ptr::null(),
+            )
         };
         assert!(!result.is_null());
         let s = unsafe { CStr::from_ptr(result) }.to_str().unwrap();
@@ -187,15 +214,24 @@ mod tests {
 
     #[test]
     fn convert_bytes_braille_mode() {
-        let img = image::DynamicImage::ImageLuma8(
-            image::GrayImage::from_fn(4, 4, |_, _| image::Luma([255u8])),
-        );
+        let img = image::DynamicImage::ImageLuma8(image::GrayImage::from_fn(4, 4, |_, _| {
+            image::Luma([255u8])
+        }));
         let mut buf = Vec::new();
-        img.write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png).unwrap();
+        img.write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png)
+            .unwrap();
 
         let mode = CString::new("braille").unwrap();
         let result = unsafe {
-            asciiify_convert_bytes(buf.as_ptr(), buf.len(), mode.as_ptr(), 4, 2, false, ptr::null())
+            asciiify_convert_bytes(
+                buf.as_ptr(),
+                buf.len(),
+                mode.as_ptr(),
+                4,
+                2,
+                false,
+                ptr::null(),
+            )
         };
         assert!(!result.is_null());
         unsafe { asciiify_free(result) };

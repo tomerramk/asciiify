@@ -39,15 +39,9 @@ pub fn decode_audio(path: &str) -> Result<Option<AudioData>, ConvertError> {
     let src_layout = decoder.channel_layout();
     let dst_format = ffmpeg_next::format::Sample::F32(SampleType::Packed);
 
-    let mut resampler = resampling::Context::get(
-        src_format,
-        src_layout,
-        rate,
-        dst_format,
-        src_layout,
-        rate,
-    )
-    .map_err(|e| ConvertError::Video(format!("audio resampler: {e}")))?;
+    let mut resampler =
+        resampling::Context::get(src_format, src_layout, rate, dst_format, src_layout, rate)
+            .map_err(|e| ConvertError::Video(format!("audio resampler: {e}")))?;
 
     let mut all_samples: Vec<f32> = Vec::new();
     let mut packets_done = false;
@@ -60,8 +54,7 @@ pub fn decode_audio(path: &str) -> Result<Option<AudioData>, ConvertError> {
                 let data = resampled.data(0);
                 let n_bytes = (resampled.samples() * channels as usize * 4).min(data.len());
                 for chunk in data[..n_bytes].chunks_exact(4) {
-                    all_samples
-                        .push(f32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]));
+                    all_samples.push(f32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]));
                 }
             }
             continue;

@@ -1,10 +1,10 @@
+#[cfg(feature = "video")]
+pub mod audio;
 pub mod charset;
 pub mod converter;
 pub mod error;
 pub mod image;
 pub mod options;
-#[cfg(feature = "video")]
-pub mod audio;
 #[cfg(feature = "video")]
 pub mod video;
 

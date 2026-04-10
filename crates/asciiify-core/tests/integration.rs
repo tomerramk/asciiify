@@ -1,8 +1,11 @@
 //! Integration tests using real image fixtures.
 
-use asciiify_core::{convert_image_file, convert_image_bytes, ConvertOptions, OutputMode};
+use asciiify_core::{convert_image_bytes, convert_image_file, ConvertOptions, OutputMode};
 
-const FIXTURE: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/fixtures/gradient.png");
+const FIXTURE: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../tests/fixtures/gradient.png"
+);
 
 #[test]
 fn convert_fixture_ascii() {
@@ -92,7 +95,11 @@ fn convert_fixture_custom_charset() {
 
 #[test]
 fn convert_fixture_all_modes_produce_output() {
-    for mode in [OutputMode::Ascii, OutputMode::HalfBlock, OutputMode::Braille] {
+    for mode in [
+        OutputMode::Ascii,
+        OutputMode::HalfBlock,
+        OutputMode::Braille,
+    ] {
         let opts = ConvertOptions {
             width: Some(30),
             height: Some(8),
@@ -101,6 +108,11 @@ fn convert_fixture_all_modes_produce_output() {
         };
         let result = convert_image_file(FIXTURE, &opts).unwrap();
         assert!(!result.is_empty(), "mode {:?} produced empty output", mode);
-        assert_eq!(result.lines().count(), 8, "mode {:?} wrong line count", mode);
+        assert_eq!(
+            result.lines().count(),
+            8,
+            "mode {:?} wrong line count",
+            mode
+        );
     }
 }

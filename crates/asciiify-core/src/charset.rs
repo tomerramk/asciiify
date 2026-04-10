@@ -22,9 +22,9 @@ pub fn brightness_to_half_block(top: u8, bottom: u8, threshold: u8, invert: bool
 
     match (top_on, bot_on) {
         (false, false) => ' ',
-        (true, false) => '\u{2580}',  // ▀
-        (false, true) => '\u{2584}',  // ▄
-        (true, true) => '\u{2588}',   // █
+        (true, false) => '\u{2580}', // ▀
+        (false, true) => '\u{2584}', // ▄
+        (true, true) => '\u{2588}',  // █
     }
 }
 
@@ -47,7 +47,11 @@ pub fn block_to_braille(block: &[[u8; 4]; 2], threshold: u8, invert: bool) -> ch
     let mut bits: u8 = 0;
     for x in 0..2 {
         for y in 0..4 {
-            let b = if invert { 255 - block[x][y] } else { block[x][y] };
+            let b = if invert {
+                255 - block[x][y]
+            } else {
+                block[x][y]
+            };
             if b >= threshold {
                 bits |= BRAILLE_MAP[x][y];
             }
@@ -123,6 +127,9 @@ mod tests {
         block[0][2] = 255; // bit 0x04
         block[1][3] = 255; // bit 0x80
         let expected = 0x2800 + 0x01 + 0x10 + 0x04 + 0x80;
-        assert_eq!(block_to_braille(&block, 128, false), char::from_u32(expected).unwrap());
+        assert_eq!(
+            block_to_braille(&block, 128, false),
+            char::from_u32(expected).unwrap()
+        );
     }
 }

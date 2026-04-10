@@ -1,8 +1,8 @@
 mod cli;
 mod player;
 
-use clap::Parser;
 use asciiify_core::ConvertOptions;
+use clap::Parser;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = cli::Cli::parse();

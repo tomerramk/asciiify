@@ -17,19 +17,13 @@ pub fn convert_image_file(
 }
 
 /// Convert raw image bytes to an ASCII art string.
-pub fn convert_image_bytes(
-    data: &[u8],
-    opts: &ConvertOptions,
-) -> Result<String, ConvertError> {
+pub fn convert_image_bytes(data: &[u8], opts: &ConvertOptions) -> Result<String, ConvertError> {
     let img = load_image_from_bytes(data)?;
     convert_image(&img, opts)
 }
 
 /// Convert a `DynamicImage` to an ASCII art string.
-pub fn convert_image(
-    img: &DynamicImage,
-    opts: &ConvertOptions,
-) -> Result<String, ConvertError> {
+pub fn convert_image(img: &DynamicImage, opts: &ConvertOptions) -> Result<String, ConvertError> {
     let gray = prepare_image(img, opts);
     let (px_w, px_h) = gray.dimensions();
 
@@ -40,12 +34,7 @@ pub fn convert_image(
     }
 }
 
-fn render_ascii(
-    gray: &image::GrayImage,
-    width: u32,
-    height: u32,
-    opts: &ConvertOptions,
-) -> String {
+fn render_ascii(gray: &image::GrayImage, width: u32, height: u32, opts: &ConvertOptions) -> String {
     let ramp = opts.ascii_ramp();
     let mut out = String::with_capacity((width as usize + 1) * height as usize);
 
@@ -81,7 +70,12 @@ fn render_half_block(
             } else {
                 0
             };
-            out.push(brightness_to_half_block(top, bot, DEFAULT_THRESHOLD, opts.invert));
+            out.push(brightness_to_half_block(
+                top,
+                bot,
+                DEFAULT_THRESHOLD,
+                opts.invert,
+            ));
         }
         if row + 1 < char_rows {
             out.push('\n');
@@ -210,20 +204,28 @@ mod tests {
     #[test]
     fn invert_flips_output() {
         let img = make_gray_image(10, 10, 0);
-        let normal = convert_image(&img, &ConvertOptions {
-            width: Some(10),
-            height: Some(5),
-            mode: OutputMode::Ascii,
-            invert: false,
-            ..Default::default()
-        }).unwrap();
-        let inverted = convert_image(&img, &ConvertOptions {
-            width: Some(10),
-            height: Some(5),
-            mode: OutputMode::Ascii,
-            invert: true,
-            ..Default::default()
-        }).unwrap();
+        let normal = convert_image(
+            &img,
+            &ConvertOptions {
+                width: Some(10),
+                height: Some(5),
+                mode: OutputMode::Ascii,
+                invert: false,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let inverted = convert_image(
+            &img,
+            &ConvertOptions {
+                width: Some(10),
+                height: Some(5),
+                mode: OutputMode::Ascii,
+                invert: true,
+                ..Default::default()
+            },
+        )
+        .unwrap();
         assert_ne!(normal, inverted);
     }
 
@@ -298,10 +300,8 @@ mod tests {
         // Create a minimal valid PNG in memory
         let img = make_gray_image(4, 4, 128);
         let mut buf = Vec::new();
-        img.write_to(
-            &mut std::io::Cursor::new(&mut buf),
-            image::ImageFormat::Png,
-        ).unwrap();
+        img.write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png)
+            .unwrap();
 
         let opts = ConvertOptions {
             width: Some(4),

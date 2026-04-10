@@ -45,16 +45,14 @@ pub struct ConvertOptionsJs {
 #[napi]
 pub fn convert(path: String, options: Option<ConvertOptionsJs>) -> Result<String> {
     let opts = build_options(options)?;
-    asciiify_core::convert_image_file(&path, &opts)
-        .map_err(|e| Error::from_reason(e.to_string()))
+    asciiify_core::convert_image_file(&path, &opts).map_err(|e| Error::from_reason(e.to_string()))
 }
 
 /// Convert in-memory image bytes to ASCII art.
 #[napi]
 pub fn convert_bytes(data: Buffer, options: Option<ConvertOptionsJs>) -> Result<String> {
     let opts = build_options(options)?;
-    asciiify_core::convert_image_bytes(&data, &opts)
-        .map_err(|e| Error::from_reason(e.to_string()))
+    asciiify_core::convert_image_bytes(&data, &opts).map_err(|e| Error::from_reason(e.to_string()))
 }
 
 /// Reusable converter with preset options.
