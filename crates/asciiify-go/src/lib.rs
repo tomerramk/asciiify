@@ -36,10 +36,7 @@ pub unsafe extern "C" fn asciiify_convert_file(
     let mode_str = if mode.is_null() {
         "ascii"
     } else {
-        match unsafe { CStr::from_ptr(mode) }.to_str() {
-            Ok(s) => s,
-            Err(_) => "ascii",
-        }
+        unsafe { CStr::from_ptr(mode) }.to_str().unwrap_or("ascii")
     };
 
     let charset_str = if charset.is_null() {
@@ -93,10 +90,7 @@ pub unsafe extern "C" fn asciiify_convert_bytes(
     let mode_str = if mode.is_null() {
         "ascii"
     } else {
-        match unsafe { CStr::from_ptr(mode) }.to_str() {
-            Ok(s) => s,
-            Err(_) => "ascii",
-        }
+        unsafe { CStr::from_ptr(mode) }.to_str().unwrap_or("ascii")
     };
 
     let charset_str = if charset.is_null() {

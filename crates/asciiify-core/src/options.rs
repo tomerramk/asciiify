@@ -1,18 +1,13 @@
 /// Output mode for ASCII art conversion.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum OutputMode {
     /// Classic ASCII character ramp (one char per pixel).
+    #[default]
     Ascii,
     /// Unicode half-block characters (▀▄█ ), doubling vertical resolution.
     HalfBlock,
     /// Unicode braille patterns (2×4 dot matrix per character), highest resolution.
     Braille,
-}
-
-impl Default for OutputMode {
-    fn default() -> Self {
-        Self::Ascii
-    }
 }
 
 /// Options controlling the ASCII art conversion.
