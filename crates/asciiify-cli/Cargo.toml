@@ -1,0 +1,26 @@
+[package]
+name = "asciiify-cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for converting images and video to ASCII art"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/tomerramk/asciiify"
+keywords = ["ascii", "art", "image", "terminal", "cli"]
+categories = ["command-line-utilities", "multimedia::images"]
+authors = ["Tomer Ramkovich"]
+
+[features]
+default = []
+video = ["asciiify-core/video", "dep:rodio", "dep:ffmpeg-next"]
+
+[[bin]]
+name = "asciiify"
+path = "src/main.rs"
+
+[dependencies]
+asciiify-core = { version = "0.1.0", path = "../asciiify-core" }
+clap = { version = "4", features = ["derive"] }
+crossterm = "0.29"
+rodio = { version = "0.19", optional = true }
+ffmpeg-next = { version = "7", optional = true }

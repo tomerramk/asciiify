@@ -1,0 +1,21 @@
+[package]
+name = "asciiify-core"
+version = "0.1.0"
+edition = "2021"
+description = "Core library for converting images and video to ASCII art"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/tomerramk/asciiify"
+keywords = ["ascii", "art", "image", "terminal", "braille"]
+categories = ["command-line-utilities", "multimedia::images"]
+authors = ["Tomer Ramkovich"]
+
+[features]
+default = []
+video = ["dep:ffmpeg-next"]
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp", "tiff", "qoi"] }
+thiserror = "2"
+crossterm = "0.29"
+ffmpeg-next = { version = "7", optional = true }

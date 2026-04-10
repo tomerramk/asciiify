@@ -1,0 +1,16 @@
+[package]
+name = "asciiify-js"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tomer Ramkovich"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+asciiify-core = { path = "../asciiify-core" }
+napi = { version = "2", features = ["napi6"] }
+napi-derive = "2"
+
+[build-dependencies]
+napi-build = "2"

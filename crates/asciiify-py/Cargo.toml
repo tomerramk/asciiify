@@ -1,0 +1,13 @@
+[package]
+name = "asciiify-py"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tomer Ramkovich"]
+
+[lib]
+name = "asciiify"
+crate-type = ["cdylib"]
+
+[dependencies]
+asciiify-core = { path = "../asciiify-core" }
+pyo3 = { version = "0.24", features = ["extension-module"] }

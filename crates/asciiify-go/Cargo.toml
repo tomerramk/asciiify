@@ -1,0 +1,18 @@
+[package]
+name = "asciiify-go"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tomer Ramkovich"]
+
+[lib]
+name = "asciiify_ffi"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+asciiify-core = { path = "../asciiify-core" }
+
+[build-dependencies]
+cbindgen = "0.27"
+
+[dev-dependencies]
+image = { version = "0.25", default-features = false, features = ["png"] }

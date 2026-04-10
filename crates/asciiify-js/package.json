@@ -1,0 +1,38 @@
+{
+  "name": "asciiify",
+  "version": "0.1.0",
+  "author": "Tomer Ramkovich",
+  "description": "Convert images and video to ASCII art",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomerramk/asciiify"
+  },
+  "napi": {
+    "name": "asciiify",
+    "triples": {}
+  },
+  "scripts": {
+    "build": "napi build --release --platform",
+    "build-debug": "napi build --platform",
+    "test": "node --test test.mjs"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0",
+    "@types/node": "^22.0.0"
+  },
+  "keywords": [
+    "ascii",
+    "image",
+    "art",
+    "converter",
+    "napi"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "asciiify.*.node"
+  ]
+}
