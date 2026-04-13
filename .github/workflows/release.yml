@@ -213,4 +213,4 @@ jobs:
           path: crates/asciiify-js/
       - name: Publish
         working-directory: crates/asciiify-js
-        run: npm publish --access public
+        run: npm publish --access public --provenance
