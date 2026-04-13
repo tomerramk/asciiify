@@ -4,6 +4,8 @@ Node.js/TypeScript native addon for converting images to ASCII art. Powered by R
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
+![Pikachu](/docs/pikachu.png)
+
 ## Install
 
 ```bash

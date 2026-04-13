@@ -4,6 +4,8 @@ Command-line tool for converting images and videos to ASCII art in your terminal
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
+![Pikachu](/docs/pikachu.png)
+
 ## Install
 
 ```bash

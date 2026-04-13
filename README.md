@@ -2,6 +2,8 @@
 
 Convert images and video to monochrome ASCII art in your terminal. Supports three output modes: classic ASCII characters, Unicode half-blocks (doubles vertical resolution), and braille patterns (highest resolution).
 
+![Pikachu](docs/pikachu.png)
+
 ## Features
 
 - **Three output modes**:

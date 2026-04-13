@@ -4,6 +4,8 @@ Core Rust library for converting images to ASCII art.
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
+![Pikachu](/docs/pikachu.png)
+
 ## Features
 
 - **Three output modes**: classic ASCII characters, Unicode half-blocks, and braille patterns
@@ -37,11 +39,11 @@ let art = convert_image_bytes(&bytes, &ConvertOptions::default())?;
 
 ## Output Modes
 
-| Mode | Characters | Resolution |
-|------|-----------|------------|
-| `Ascii` | `.:-=+*#%@` | 1 char per pixel |
-| `HalfBlock` | `▀▄█` | 2x vertical |
-| `Braille` | Unicode braille | 4x vertical |
+| Mode        | Characters      | Resolution       |
+| ----------- | --------------- | ---------------- |
+| `Ascii`     | `.:-=+*#%@`     | 1 char per pixel |
+| `HalfBlock` | `▀▄█`           | 2x vertical      |
+| `Braille`   | Unicode braille | 4x vertical      |
 
 ## License
 

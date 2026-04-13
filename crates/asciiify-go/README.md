@@ -4,6 +4,8 @@ Go package for converting images to ASCII art. Powered by Rust via C FFI.
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
+![Pikachu](/docs/pikachu.png)
+
 ## Prerequisites
 
 Build the shared library before using:

@@ -4,6 +4,8 @@ Python library and CLI for converting images to ASCII art. Powered by Rust via P
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
+![Pikachu](/docs/pikachu.png)
+
 ## Install
 
 ```bash
