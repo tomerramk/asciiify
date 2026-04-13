@@ -96,7 +96,7 @@ impl Converter {
 }
 
 #[pymodule]
-fn asciiify(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn _asciiify(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(convert, m)?)?;
     m.add_function(wrap_pyfunction!(convert_bytes, m)?)?;
     m.add_class::<Converter>()?;

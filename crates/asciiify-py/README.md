@@ -1,6 +1,6 @@
 # asciiify
 
-Python library for converting images to ASCII art. Powered by Rust via PyO3.
+Python library and CLI for converting images to ASCII art. Powered by Rust via PyO3.
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
@@ -10,7 +10,31 @@ Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 pip install asciiify
 ```
 
-## Usage
+## CLI
+
+Installing the package also provides the `asciiify` command:
+
+```bash
+# Convert an image
+asciiify image.png
+
+# Braille mode, custom width
+asciiify photo.jpg -m braille -w 100
+
+# Output to file
+asciiify image.png -o output.txt
+
+# All options
+asciiify --help
+```
+
+Or via `python -m`:
+
+```bash
+python -m asciiify image.png -m half-block -w 80
+```
+
+## Library Usage
 
 ```python
 import asciiify
@@ -33,11 +57,11 @@ art = converter.convert_bytes(data)
 
 ## Output Modes
 
-| Mode | Description |
-|------|-------------|
-| `"ascii"` | Classic character ramp (default) |
-| `"half-block"` | Unicode blocks, 2x vertical resolution |
-| `"braille"` | Unicode braille, 4x vertical resolution |
+| Mode           | Description                             |
+| -------------- | --------------------------------------- |
+| `"ascii"`      | Classic character ramp (default)        |
+| `"half-block"` | Unicode blocks, 2x vertical resolution  |
+| `"braille"`    | Unicode braille, 4x vertical resolution |
 
 ## API
 

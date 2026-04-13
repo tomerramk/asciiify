@@ -37,7 +37,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.android-arm64.node')
           } else {
-            nativeBinding = require('asciiify-android-arm64')
+            nativeBinding = require('@tomerramk/asciiify-android-arm64')
           }
         } catch (e) {
           loadError = e
@@ -49,7 +49,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.android-arm-eabi.node')
           } else {
-            nativeBinding = require('asciiify-android-arm-eabi')
+            nativeBinding = require('@tomerramk/asciiify-android-arm-eabi')
           }
         } catch (e) {
           loadError = e
@@ -69,7 +69,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.win32-x64-msvc.node')
           } else {
-            nativeBinding = require('asciiify-win32-x64-msvc')
+            nativeBinding = require('@tomerramk/asciiify-win32-x64-msvc')
           }
         } catch (e) {
           loadError = e
@@ -83,7 +83,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.win32-ia32-msvc.node')
           } else {
-            nativeBinding = require('asciiify-win32-ia32-msvc')
+            nativeBinding = require('@tomerramk/asciiify-win32-ia32-msvc')
           }
         } catch (e) {
           loadError = e
@@ -97,7 +97,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.win32-arm64-msvc.node')
           } else {
-            nativeBinding = require('asciiify-win32-arm64-msvc')
+            nativeBinding = require('@tomerramk/asciiify-win32-arm64-msvc')
           }
         } catch (e) {
           loadError = e
@@ -113,7 +113,7 @@ switch (platform) {
       if (localFileExisted) {
         nativeBinding = require('./asciiify.darwin-universal.node')
       } else {
-        nativeBinding = require('asciiify-darwin-universal')
+        nativeBinding = require('@tomerramk/asciiify-darwin-universal')
       }
       break
     } catch {}
@@ -124,7 +124,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.darwin-x64.node')
           } else {
-            nativeBinding = require('asciiify-darwin-x64')
+            nativeBinding = require('@tomerramk/asciiify-darwin-x64')
           }
         } catch (e) {
           loadError = e
@@ -138,7 +138,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.darwin-arm64.node')
           } else {
-            nativeBinding = require('asciiify-darwin-arm64')
+            nativeBinding = require('@tomerramk/asciiify-darwin-arm64')
           }
         } catch (e) {
           loadError = e
@@ -157,7 +157,7 @@ switch (platform) {
       if (localFileExisted) {
         nativeBinding = require('./asciiify.freebsd-x64.node')
       } else {
-        nativeBinding = require('asciiify-freebsd-x64')
+        nativeBinding = require('@tomerramk/asciiify-freebsd-x64')
       }
     } catch (e) {
       loadError = e
@@ -174,7 +174,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-x64-musl.node')
             } else {
-              nativeBinding = require('asciiify-linux-x64-musl')
+              nativeBinding = require('@tomerramk/asciiify-linux-x64-musl')
             }
           } catch (e) {
             loadError = e
@@ -187,7 +187,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-x64-gnu.node')
             } else {
-              nativeBinding = require('asciiify-linux-x64-gnu')
+              nativeBinding = require('@tomerramk/asciiify-linux-x64-gnu')
             }
           } catch (e) {
             loadError = e
@@ -203,7 +203,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-arm64-musl.node')
             } else {
-              nativeBinding = require('asciiify-linux-arm64-musl')
+              nativeBinding = require('@tomerramk/asciiify-linux-arm64-musl')
             }
           } catch (e) {
             loadError = e
@@ -216,7 +216,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-arm64-gnu.node')
             } else {
-              nativeBinding = require('asciiify-linux-arm64-gnu')
+              nativeBinding = require('@tomerramk/asciiify-linux-arm64-gnu')
             }
           } catch (e) {
             loadError = e
@@ -232,7 +232,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-arm-musleabihf.node')
             } else {
-              nativeBinding = require('asciiify-linux-arm-musleabihf')
+              nativeBinding = require('@tomerramk/asciiify-linux-arm-musleabihf')
             }
           } catch (e) {
             loadError = e
@@ -245,7 +245,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-arm-gnueabihf.node')
             } else {
-              nativeBinding = require('asciiify-linux-arm-gnueabihf')
+              nativeBinding = require('@tomerramk/asciiify-linux-arm-gnueabihf')
             }
           } catch (e) {
             loadError = e
@@ -261,7 +261,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-riscv64-musl.node')
             } else {
-              nativeBinding = require('asciiify-linux-riscv64-musl')
+              nativeBinding = require('@tomerramk/asciiify-linux-riscv64-musl')
             }
           } catch (e) {
             loadError = e
@@ -274,7 +274,7 @@ switch (platform) {
             if (localFileExisted) {
               nativeBinding = require('./asciiify.linux-riscv64-gnu.node')
             } else {
-              nativeBinding = require('asciiify-linux-riscv64-gnu')
+              nativeBinding = require('@tomerramk/asciiify-linux-riscv64-gnu')
             }
           } catch (e) {
             loadError = e
@@ -289,7 +289,7 @@ switch (platform) {
           if (localFileExisted) {
             nativeBinding = require('./asciiify.linux-s390x-gnu.node')
           } else {
-            nativeBinding = require('asciiify-linux-s390x-gnu')
+            nativeBinding = require('@tomerramk/asciiify-linux-s390x-gnu')
           }
         } catch (e) {
           loadError = e

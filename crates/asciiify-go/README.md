@@ -20,7 +20,27 @@ cargo build --release -p asciiify-go
 go get github.com/tomerramk/asciiify/crates/asciiify-go
 ```
 
-## Usage
+## CLI
+
+Install the `asciiify` command:
+
+```bash
+go install github.com/tomerramk/asciiify/crates/asciiify-go/cmd/asciiify@latest
+
+# Convert an image
+asciiify image.png
+
+# Braille mode, custom width
+asciiify -mode braille -w 100 photo.jpg
+
+# Output to file
+asciiify -o output.txt image.png
+
+# All options
+asciiify -help
+```
+
+## Library Usage
 
 ```go
 package main
@@ -57,13 +77,13 @@ func main() {
 
 ## Options
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `Mode` | `string` | `"ascii"` | `"ascii"`, `"half-block"`, or `"braille"` |
-| `Width` | `uint32` | `0` (auto) | Output width in characters |
-| `Height` | `uint32` | `0` (auto) | Output height in characters |
-| `Invert` | `bool` | `false` | Invert brightness |
-| `Charset` | `string` | `""` | Custom ASCII ramp (ascii mode only) |
+| Field     | Type     | Default    | Description                               |
+| --------- | -------- | ---------- | ----------------------------------------- |
+| `Mode`    | `string` | `"ascii"`  | `"ascii"`, `"half-block"`, or `"braille"` |
+| `Width`   | `uint32` | `0` (auto) | Output width in characters                |
+| `Height`  | `uint32` | `0` (auto) | Output height in characters               |
+| `Invert`  | `bool`   | `false`    | Invert brightness                         |
+| `Charset` | `string` | `""`       | Custom ASCII ramp (ascii mode only)       |
 
 ## License
 

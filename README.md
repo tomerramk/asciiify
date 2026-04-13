@@ -21,29 +21,36 @@ Convert images and video to monochrome ASCII art in your terminal. Supports thre
 
 ### CLI Tool
 
+The `asciiify` command is available through multiple package managers:
+
 ```bash
+# Rust / Cargo
 cargo install asciiify-cli
+
+# Python / pip
+pip install asciiify
+
+# Node.js / npm (global)
+npm install -g @tomerramk/asciiify
+
+# Go
+go install github.com/tomerramk/asciiify/crates/asciiify-go/cmd/asciiify@latest
 ```
 
 Or download a prebuilt binary from the [GitHub Releases](https://github.com/tomerramk/asciiify/releases) page.
 
 **FFmpeg** is required for video support. Install it system-wide before using video features.
 
-### Python
+### As a Library
 
 ```bash
+# Python
 pip install asciiify
-```
 
-### Node.js / TypeScript
+# Node.js / TypeScript
+npm install @tomerramk/asciiify
 
-```bash
-npm install asciiify
-```
-
-### Go
-
-```bash
+# Go
 go get github.com/tomerramk/asciiify/crates/asciiify-go
 ```
 
@@ -79,6 +86,8 @@ cargo build --release -p asciiify-go
 
 ### CLI Tool
 
+The CLI works the same regardless of how you installed it:
+
 ```bash
 # Basic usage - convert image to ASCII
 asciiify path/to/image.png
@@ -98,24 +107,17 @@ asciiify image.png --charset " .oO@"
 # Output to file
 asciiify image.png -o output.txt
 
-# Video playback (requires --features video build)
+# Video playback (Rust CLI only, requires --features video build)
 asciiify video.mp4 --fps 15
 
 # Help
 asciiify --help
 ```
 
-**Examples:**
+When installed via Python, you can also use:
 
 ```bash
-# High-resolution braille output
-asciiify sunset.jpg -m braille -w 120
-
-# Compact half-block display
-asciiify logo.png -m half-block -w 60 -H 20
-
-# Video in terminal (press q to quit)
-asciiify clip.mp4 -m ascii --fps 10
+python -m asciiify image.png -m braille -w 100
 ```
 
 ### Python Library

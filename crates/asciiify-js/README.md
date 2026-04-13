@@ -7,10 +7,30 @@ Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 ## Install
 
 ```bash
-npm install asciiify
+npm install @tomerramk/asciiify
 ```
 
-## Usage
+## CLI
+
+Install globally to get the `asciiify` command:
+
+```bash
+npm install -g @tomerramk/asciiify
+
+# Convert an image
+asciiify image.png
+
+# Braille mode, custom width
+asciiify photo.jpg -m braille -w 100
+
+# Output to file
+asciiify image.png -o output.txt
+
+# All options
+asciiify --help
+```
+
+## Library Usage
 
 ```typescript
 import { convert, convertBytes, Converter } from "asciiify";
@@ -47,11 +67,11 @@ interface ConvertOptions {
 
 ## Output Modes
 
-| Mode | Description |
-|------|-------------|
-| `"ascii"` | Classic character ramp (default) |
-| `"half-block"` | Unicode blocks, 2x vertical resolution |
-| `"braille"` | Unicode braille, 4x vertical resolution |
+| Mode           | Description                             |
+| -------------- | --------------------------------------- |
+| `"ascii"`      | Classic character ramp (default)        |
+| `"half-block"` | Unicode blocks, 2x vertical resolution  |
+| `"braille"`    | Unicode braille, 4x vertical resolution |
 
 ## License
 

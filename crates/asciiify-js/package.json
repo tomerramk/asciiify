@@ -5,6 +5,9 @@
   "description": "Convert images and video to ASCII art",
   "main": "index.js",
   "types": "index.d.ts",
+  "bin": {
+    "asciiify": "bin/asciiify.js"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -36,6 +39,7 @@
   "files": [
     "index.js",
     "index.d.ts",
+    "bin/asciiify.js",
     "asciiify.*.node"
   ]
 }
