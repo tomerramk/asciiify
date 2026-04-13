@@ -97,7 +97,7 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
 name = "asciiify-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "asciiify-core",
  "clap",
@@ -108,7 +108,7 @@ dependencies = [
 
 [[package]]
 name = "asciiify-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "crossterm",
  "ffmpeg-next",
@@ -118,7 +118,7 @@ dependencies = [
 
 [[package]]
 name = "asciiify-go"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "asciiify-core",
  "cbindgen",
@@ -127,7 +127,7 @@ dependencies = [
 
 [[package]]
 name = "asciiify-js"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "asciiify-core",
  "napi",
@@ -137,7 +137,7 @@ dependencies = [
 
 [[package]]
 name = "asciiify-py"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "asciiify-core",
  "pyo3",

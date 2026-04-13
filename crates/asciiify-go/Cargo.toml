@@ -1,6 +1,6 @@
 [package]
 name = "asciiify-go"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Tomer Ramkovich"]
 
@@ -9,7 +9,7 @@ name = "asciiify_ffi"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-asciiify-core = { path = "../asciiify-core" }
+asciiify-core = { version = "0.2.0", path = "../asciiify-core" }
 
 [build-dependencies]
 cbindgen = "0.27"
