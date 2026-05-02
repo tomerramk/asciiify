@@ -4,7 +4,7 @@ use std::path::Path;
 use asciiify_core::OutputMode;
 
 #[derive(Parser)]
-#[command(name = "asciiify", about = "Convert images and video to ASCII art")]
+#[command(name = "asciiify", about = "Convert images and video to ASCII art", version)]
 pub struct Cli {
     /// Input image or video file path
     pub input: String,
