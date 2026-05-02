@@ -104,3 +104,81 @@ func ConvertBytes(data []byte, opts *Options) (string, error) {
 
 	return C.GoString(result), nil
 }
+
+// VideoFrames provides frame-by-frame ASCII art conversion of a video file.
+// The handle must be closed after use.
+type VideoFrames struct {
+	handle *C.struct_AsciiifyVideo
+}
+
+// OpenVideo opens a video file for frame-by-frame ASCII conversion.
+// Close the returned VideoFrames when done.
+func OpenVideo(path string, opts *Options) (*VideoFrames, error) {
+	if opts == nil {
+		opts = &Options{}
+	}
+
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+
+	cMode := C.CString(opts.Mode)
+	defer C.free(unsafe.Pointer(cMode))
+
+	var cCharset *C.char
+	if opts.Charset != "" {
+		cCharset = C.CString(opts.Charset)
+		defer C.free(unsafe.Pointer(cCharset))
+	}
+
+	handle := C.asciiify_video_open(
+		cPath,
+		cMode,
+		C.uint32_t(opts.Width),
+		C.uint32_t(opts.Height),
+		C.bool(opts.Invert),
+		cCharset,
+	)
+	if handle == nil {
+		return nil, errors.New("asciiify: failed to open video")
+	}
+
+	return &VideoFrames{handle: handle}, nil
+}
+
+// FPS returns the frames per second of the video.
+func (v *VideoFrames) FPS() float64 {
+	if v.handle == nil {
+		return 0
+	}
+	return float64(C.asciiify_video_fps(v.handle))
+}
+
+// NextFrame returns the next frame as an ASCII art string.
+// Returns ("", io.EOF) when there are no more frames.
+func (v *VideoFrames) NextFrame() (string, error) {
+	if v.handle == nil {
+		return "", errors.New("asciiify: video handle is closed")
+	}
+	result := C.asciiify_video_next_frame(v.handle)
+	if result == nil {
+		return "", errors.New("asciiify: no more frames")
+	}
+	defer C.asciiify_free(result)
+	return C.GoString(result), nil
+}
+
+// Close releases all resources associated with the video.
+func (v *VideoFrames) Close() {
+	if v.handle != nil {
+		C.asciiify_video_close(v.handle)
+		v.handle = nil
+	}
+}
+
+// PlayAudioAsync decodes all audio from a video file and plays it in a
+// background goroutine. Returns immediately.
+func PlayAudioAsync(path string) {
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	C.asciiify_play_audio_async(cPath)
+}

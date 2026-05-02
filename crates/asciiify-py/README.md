@@ -1,6 +1,6 @@
 # asciiify
 
-Python library and CLI for converting images to ASCII art. Powered by Rust via PyO3.
+Python library and CLI for converting images and videos to ASCII art. Powered by Rust via PyO3.
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
@@ -12,6 +12,24 @@ Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 pip install asciiify
 ```
 
+## Building from Source
+
+Requires [Rust](https://rustup.rs/) and [maturin](https://www.maturin.rs/).
+
+```bash
+git clone https://github.com/tomerramk/asciiify.git
+cd asciiify/crates/asciiify-py
+
+pip install maturin
+
+# Build and install into the active Python environment
+maturin develop --release
+
+# Or build a wheel and install it
+maturin build --release
+pip install ../../target/wheels/asciiify-*.whl
+```
+
 ## CLI
 
 Installing the package also provides the `asciiify` command:
@@ -21,10 +39,16 @@ Installing the package also provides the `asciiify` command:
 asciiify image.png
 
 # Braille mode, custom width
-asciiify photo.jpg -m braille -w 100
+asciiify image.jpg -m braille -w 100
 
 # Output to file
 asciiify image.png -o output.txt
+
+# Play a video
+asciiify video.mp4
+
+# Play a video at a specific FPS
+asciiify video.mp4 --fps 30
 
 # All options
 asciiify --help
@@ -42,19 +66,47 @@ python -m asciiify image.png -m half-block -w 80
 import asciiify
 
 # Convert image file
-print(asciiify.convert("image.png"))
+art = asciiify.convert("image.png")
+print(art)
 
 # With options
-art = asciiify.convert("photo.jpg", mode="braille", width=100, height=50)
+art = asciiify.convert("image.jpg", mode="braille", width=100, height=50)
 
 # Convert from bytes
 with open("image.png", "rb") as f:
-    art = asciiify.convert_bytes(f.read(), mode="half-block", width=80)
+    data = f.read()
+art = asciiify.convert_bytes(data, mode="half-block", width=80)
 
-# Reusable converter with preset options
+# Reusable converter
 converter = asciiify.Converter(mode="ascii", width=120, invert=True)
 art = converter.convert("image.png")
-art = converter.convert_bytes(data)
+
+# Video: iterate frames as ASCII strings
+from asciiify import VideoFrames
+
+frames = VideoFrames("video.mp4", width=80)
+print(f"FPS: {frames.fps}")
+for frame in frames:
+    print(frame)
+```
+
+## Video Support
+
+Video support is included by default. FFmpeg is downloaded automatically on first use.
+
+```python
+from asciiify import VideoFrames
+
+frames = VideoFrames("video.mp4", width=80)
+print(f"FPS: {frames.fps}")
+for frame in frames:
+    print(frame)
+```
+
+Build note: when building from source, video is included in the default build:
+
+```bash
+maturin develop
 ```
 
 ## Output Modes

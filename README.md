@@ -1,5 +1,14 @@
 # Asciiify
 
+<div align="center">
+
+[![asciiify-core](https://img.shields.io/crates/v/asciiify-core?style=for-the-badge&logo=rust&label=asciiify-core&color=%23F7B500)](https://crates.io/crates/asciiify-core)
+[![asciiify-cli](https://img.shields.io/crates/v/asciiify-cli?style=for-the-badge&logo=rust&label=asciiify-cli&color=%23F7B500)](https://crates.io/crates/asciiify-cli)
+[![asciiify (PyPI)](https://img.shields.io/pypi/v/asciiify?style=for-the-badge&logo=python&logoColor=white&color=%233776AB)](https://pypi.org/project/asciiify)
+[![asciiify (npm)](https://img.shields.io/npm/v/%40tomerramk%2Fasciiify?style=for-the-badge&logo=npm&logoColor=white&color=%23CB3837)](https://www.npmjs.com/package/@tomerramk/asciiify)
+
+</div>
+
 Convert images and video to monochrome ASCII art in your terminal. Supports three output modes: classic ASCII characters, Unicode half-blocks (doubles vertical resolution), and braille patterns (highest resolution).
 
 ![Pikachu](docs/pikachu.png)
@@ -11,7 +20,7 @@ Convert images and video to monochrome ASCII art in your terminal. Supports thre
   - `half-block`: Unicode blocks (`▀▄█`) for 2x vertical resolution
   - `braille`: Unicode braille patterns for 4x vertical resolution
 - **Image support**: PNG, JPEG, GIF, BMP, WebP, TIFF, QOI
-- **Video support**: MP4, MKV, AVI, MOV, WebM, FLV, WMV, MPG, MPEG (requires FFmpeg)
+- **Video support**: MP4, MKV, AVI, MOV, WebM, FLV, WMV, MPG, MPEG (uses [ffmpeg-sidecar](https://github.com/nathanbabcock/ffmpeg-sidecar))
 - **CLI tool**: Standalone binary for terminal use
 - **Python bindings**: Import as `asciiify` module
 - **Node.js/TypeScript bindings**: Native addon via napi-rs
@@ -41,8 +50,6 @@ go install github.com/tomerramk/asciiify/crates/asciiify-go/cmd/asciiify@latest
 
 Or download a prebuilt binary from the [GitHub Releases](https://github.com/tomerramk/asciiify/releases) page.
 
-**FFmpeg** is required for video support. Install it system-wide before using video features.
-
 ### As a Library
 
 ```bash
@@ -67,13 +74,6 @@ go get github.com/tomerramk/asciiify/crates/asciiify-go
 # Clone the repository
 git clone https://github.com/tomerramk/asciiify.git
 cd asciiify
-
-# Build CLI
-cargo build --release -p asciiify-cli
-
-# Build Python package
-pip install maturin
-cd crates/asciiify-py && maturin develop
 
 # Build Node.js package
 cd crates/asciiify-js && npm install && npm run build
@@ -109,12 +109,15 @@ asciiify image.png --charset " .oO@"
 # Output to file
 asciiify image.png -o output.txt
 
-# Video playback (Rust CLI only, requires --features video build)
-asciiify video.mp4 --fps 15
+# Video playback
+asciiify video.mp4 --fps 30
 
 # Help
 asciiify --help
 ```
+
+Video support is included by default in the CLI. FFmpeg is downloaded automatically on
+first use.
 
 When installed via Python, you can also use:
 
@@ -128,27 +131,39 @@ python -m asciiify image.png -m braille -w 100
 import asciiify
 
 # Convert image file
-ascii_str = asciiify.convert("image.png")
-print(ascii_str)
+art = asciiify.convert("image.png")
+print(art)
 
-# Specify mode and dimensions
-ascii_str = asciiify.convert("image.jpg", mode="braille", width=100, height=50)
-print(ascii_str)
+# With options
+art = asciiify.convert("image.jpg", mode="braille", width=100, height=50)
 
 # Convert from bytes
 with open("image.png", "rb") as f:
     data = f.read()
-ascii_str = asciiify.convert_bytes(data, mode="half-block", width=80)
+art = asciiify.convert_bytes(data, mode="half-block", width=80)
 
 # Reusable converter
 converter = asciiify.Converter(mode="ascii", width=120, invert=True)
-ascii_str = converter.convert("image.png")
+art = converter.convert("image.png")
+
+# Video: iterate frames as ASCII strings
+from asciiify import VideoFrames
+
+frames = VideoFrames("video.mp4", width=80)
+print(f"FPS: {frames.fps}")
+for frame in frames:
+    print(frame)
 ```
 
 ### Node.js / TypeScript
 
 ```typescript
-import { convert, convertBytes, Converter } from "asciiify";
+import {
+  convert,
+  convertBytes,
+  Converter,
+  VideoFrames,
+} from "@tomerramk/asciiify";
 
 // Convert image file
 const art = convert("image.png");
@@ -165,6 +180,14 @@ const art3 = convertBytes(data, { mode: "half-block", width: 80 });
 // Reusable converter
 const converter = new Converter({ mode: "ascii", width: 120, invert: true });
 const art4 = converter.convert("image.png");
+
+// Video: iterate frames as ASCII strings
+const vf = new VideoFrames("video.mp4", { width: 80 });
+console.log("FPS:", vf.fps);
+let frame;
+while ((frame = vf.nextFrame()) !== null) {
+  console.log(frame);
+}
 ```
 
 ### Go
@@ -176,7 +199,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tomerramk/asciiify/crates/asciiify-go"
+	asciiify "github.com/tomerramk/asciiify/crates/asciiify-go"
 )
 
 func main() {
@@ -190,8 +213,8 @@ func main() {
 
 	// With options
 	art2, _ := asciiify.ConvertFile("image.jpg", &asciiify.Options{
-		Mode:   "braille",
-		Width:  100,
+		Mode:  "braille",
+		Width: 100,
 	})
 	fmt.Println(art2)
 
@@ -202,6 +225,22 @@ func main() {
 		Width: 80,
 	})
 	fmt.Println(art3)
+
+	// Video: iterate frames as ASCII strings
+	v, err := asciiify.OpenVideo("video.mp4", &asciiify.Options{Width: 80})
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	defer v.Close()
+	fmt.Printf("FPS: %.2f\n", v.FPS())
+	for {
+		frame, err := v.NextFrame()
+		if err != nil {
+			break
+		}
+		fmt.Println(frame)
+	}
 }
 ```
 

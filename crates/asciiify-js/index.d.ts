@@ -20,6 +20,11 @@ export interface ConvertOptionsJs {
 export declare function convert(path: string, options?: ConvertOptionsJs | undefined | null): string
 /** Convert in-memory image bytes to ASCII art. */
 export declare function convertBytes(data: Buffer, options?: ConvertOptionsJs | undefined | null): string
+/**
+ * Decode all audio from a video file and play it back in a background thread.
+ * Returns immediately; audio continues playing in the background.
+ */
+export declare function playAudioAsync(path: string): void
 /** Reusable converter with preset options. */
 export declare class Converter {
   constructor(options?: ConvertOptionsJs | undefined | null)
@@ -27,4 +32,13 @@ export declare class Converter {
   convert(path: string): string
   /** Convert in-memory image bytes to ASCII art string. */
   convertBytes(data: Buffer): string
+}
+/** Iterator over video frames converted to ASCII art strings. */
+export declare class VideoFrames {
+  /** Open a video file for frame-by-frame ASCII conversion. */
+  constructor(path: string, options?: ConvertOptionsJs | undefined | null)
+  /** Frames per second of the video. */
+  get fps(): number
+  /** Get the next frame as an ASCII art string, or null when done. */
+  nextFrame(): string | null
 }

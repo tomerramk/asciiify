@@ -33,6 +33,10 @@ pub struct Cli {
     #[arg(long, default_value = "15")]
     pub fps: f64,
 
+    /// Disable audio playback
+    #[arg(long)]
+    pub mute: bool,
+
     /// Output to file instead of stdout
     #[arg(short, long)]
     pub output: Option<String>,

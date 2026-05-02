@@ -10,50 +10,17 @@ use crossterm::{cursor, execute, queue, terminal};
 use asciiify_core::ConvertOptions;
 
 #[cfg(feature = "video")]
-use ffmpeg_next::{codec, format::sample::Type as SampleType, media, software::resampling};
-#[cfg(feature = "video")]
 use rodio::{buffer::SamplesBuffer, OutputStream, Sink};
 
-/// Start streaming audio from `path` in a background thread.
-/// Decodes in small chunks and appends to the `rodio` sink as data becomes available.
+/// Decode all audio from `path` and play it back in a background thread via rodio.
+/// Returns immediately; the thread keeps the sink alive until playback finishes.
 #[cfg(feature = "video")]
 fn start_audio(path: &str) -> Option<std::thread::JoinHandle<()>> {
-    // Enough samples to fill ~100ms of audio per chunk
-    const CHUNK_SAMPLES: usize = 4096;
-
     let path = path.to_string();
     Some(std::thread::spawn(move || {
-        let _ = ffmpeg_next::init();
-
-        let mut input_ctx = match ffmpeg_next::format::input(&path) {
-            Ok(c) => c,
-            Err(_) => return,
-        };
-        let stream = match input_ctx.streams().best(media::Type::Audio) {
-            Some(s) => s,
-            None => return,
-        };
-        let stream_index = stream.index();
-        let codec_ctx = match codec::Context::from_parameters(stream.parameters()) {
-            Ok(c) => c,
-            Err(_) => return,
-        };
-        let mut decoder = match codec_ctx.decoder().audio() {
-            Ok(d) => d,
-            Err(_) => return,
-        };
-
-        let rate = decoder.rate();
-        let channels = decoder.channels() as u16;
-        let src_format = decoder.format();
-        let src_layout = decoder.channel_layout();
-        let dst_format = ffmpeg_next::format::Sample::F32(SampleType::Packed);
-
-        let mut resampler = match resampling::Context::get(
-            src_format, src_layout, rate, dst_format, src_layout, rate,
-        ) {
-            Ok(r) => r,
-            Err(_) => return,
+        let audio = match asciiify_core::decode_audio(&path) {
+            Ok(Some(a)) => a,
+            _ => return,
         };
 
         let (_stream, handle) = match OutputStream::try_default() {
@@ -65,51 +32,11 @@ fn start_audio(path: &str) -> Option<std::thread::JoinHandle<()>> {
             Err(_) => return,
         };
 
-        let mut chunk: Vec<f32> = Vec::with_capacity(CHUNK_SAMPLES * channels as usize);
-        let mut packets_done = false;
-
-        loop {
-            let mut decoded = ffmpeg_next::util::frame::Audio::empty();
-            if decoder.receive_frame(&mut decoded).is_ok() {
-                let mut resampled = ffmpeg_next::util::frame::Audio::empty();
-                if resampler.run(&decoded, &mut resampled).is_ok() {
-                    let data = resampled.data(0);
-                    let n_bytes = (resampled.samples() * channels as usize * 4).min(data.len());
-                    for c in data[..n_bytes].chunks_exact(4) {
-                        chunk.push(f32::from_le_bytes([c[0], c[1], c[2], c[3]]));
-                    }
-                }
-                // Append chunk to sink without waiting for it to finish
-                if chunk.len() >= CHUNK_SAMPLES * channels as usize {
-                    sink.append(SamplesBuffer::new(
-                        channels,
-                        rate,
-                        chunk.drain(..).collect::<Vec<_>>(),
-                    ));
-                }
-                continue;
-            }
-
-            if packets_done {
-                break;
-            }
-
-            match input_ctx.packets().next() {
-                Some((s, packet)) => {
-                    if s.index() == stream_index {
-                        let _ = decoder.send_packet(&packet);
-                    }
-                }
-                None => {
-                    packets_done = true;
-                    let _ = decoder.send_eof();
-                }
-            }
-        }
-
-        if !chunk.is_empty() {
-            sink.append(SamplesBuffer::new(channels, rate, chunk));
-        }
+        sink.append(SamplesBuffer::new(
+            audio.channels,
+            audio.sample_rate,
+            audio.samples,
+        ));
         sink.sleep_until_end();
     }))
 }
@@ -121,6 +48,7 @@ pub fn play_video(
     path: &str,
     opts: &ConvertOptions,
     target_fps: f64,
+    mute: bool,
     output_path: Option<&str>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Peek at fps before spawning the decode thread
@@ -168,7 +96,7 @@ pub fn play_video(
     });
 
     // Start audio streaming in parallel — begins playing after first chunk is decoded
-    let _audio_thread = start_audio(path);
+    let _audio_thread = if mute { None } else { start_audio(path) };
 
     // Interactive terminal playback
     let mut stdout = io::BufWriter::new(io::stdout());

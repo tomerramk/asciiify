@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if cli::is_video(&cli.input) {
         #[cfg(feature = "video")]
         {
-            player::play_video(&cli.input, &opts, cli.fps, cli.output.as_deref())?;
+            player::play_video(&cli.input, &opts, cli.fps, cli.mute, cli.output.as_deref())?;
         }
         #[cfg(not(feature = "video"))]
         {

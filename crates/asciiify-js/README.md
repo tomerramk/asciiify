@@ -1,6 +1,6 @@
 # asciiify
 
-Node.js/TypeScript native addon for converting images to ASCII art. Powered by Rust via napi-rs.
+Node.js/TypeScript native addon for converting images and videos to ASCII art. Powered by Rust via napi-rs.
 
 Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
@@ -10,6 +10,22 @@ Part of the [asciiify](https://github.com/tomerramk/asciiify) project.
 
 ```bash
 npm install @tomerramk/asciiify
+```
+
+## Building from Source
+
+Requires [Rust](https://rustup.rs/) and Node.js.
+
+```bash
+git clone https://github.com/tomerramk/asciiify.git
+cd asciiify/crates/asciiify-js
+
+npm install
+npm run build
+# Compiled addon is asciiify.*.node
+
+# Link globally so the asciiify CLI resolves to this build
+npm link
 ```
 
 ## CLI
@@ -23,10 +39,16 @@ npm install -g @tomerramk/asciiify
 asciiify image.png
 
 # Braille mode, custom width
-asciiify photo.jpg -m braille -w 100
+asciiify image.jpg -m braille -w 100
 
 # Output to file
 asciiify image.png -o output.txt
+
+# Play a video
+asciiify video.mp4
+
+# Play a video at a specific FPS
+asciiify video.mp4 --fps 30
 
 # All options
 asciiify --help
@@ -35,24 +57,57 @@ asciiify --help
 ## Library Usage
 
 ```typescript
-import { convert, convertBytes, Converter } from "asciiify";
+import {
+  convert,
+  convertBytes,
+  Converter,
+  VideoFrames,
+} from "@tomerramk/asciiify";
 
 // Convert image file
 const art = convert("image.png");
 console.log(art);
 
 // With options
-const art2 = convert("photo.jpg", { mode: "braille", width: 100 });
+const art2 = convert("image.jpg", { mode: "braille", width: 100 });
 
 // Convert from buffer
 import { readFileSync } from "fs";
 const data = readFileSync("image.png");
 const art3 = convertBytes(data, { mode: "half-block", width: 80 });
 
-// Reusable converter with preset options
+// Reusable converter
 const converter = new Converter({ mode: "ascii", width: 120, invert: true });
 const art4 = converter.convert("image.png");
-const art5 = converter.convertBytes(data);
+
+// Video: iterate frames as ASCII strings
+const vf = new VideoFrames("video.mp4", { width: 80 });
+console.log("FPS:", vf.fps);
+let frame;
+while ((frame = vf.nextFrame()) !== null) {
+  console.log(frame);
+}
+```
+
+## Video Support
+
+Video support is included by default. FFmpeg is downloaded automatically on first use.
+
+```js
+import { VideoFrames } from "@tomerramk/asciiify";
+
+const vf = new VideoFrames("video.mp4", { width: 80 });
+console.log("FPS:", vf.fps);
+let frame;
+while ((frame = vf.nextFrame()) !== null) {
+  console.log(frame);
+}
+```
+
+Build note: when building from source, video is included in the default build:
+
+```bash
+npm run build
 ```
 
 ## Options

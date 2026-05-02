@@ -21,8 +21,8 @@
     "triples": {}
   },
   "scripts": {
-    "build": "napi build --release --platform",
-    "build-debug": "napi build --platform",
+    "build": "napi build --release --platform && node -e \"const fs=require('fs');if(fs.existsSync('asciiify.win32-x64-gnu.node'))fs.copyFileSync('asciiify.win32-x64-gnu.node','asciiify.win32-x64-msvc.node')\"",
+    "build-debug": "napi build --platform && node -e \"const fs=require('fs');if(fs.existsSync('asciiify.win32-x64-gnu.node'))fs.copyFileSync('asciiify.win32-x64-gnu.node','asciiify.win32-x64-msvc.node')\"",
     "test": "node --test test.mjs"
   },
   "devDependencies": {

@@ -8,8 +8,13 @@ authors = ["Tomer Ramkovich"]
 name = "asciiify_ffi"
 crate-type = ["cdylib", "staticlib"]
 
+[features]
+default = ["video"]
+video = ["asciiify-core/video", "dep:rodio"]
+
 [dependencies]
 asciiify-core = { version = "0.2.0", path = "../asciiify-core" }
+rodio = { version = "0.19", optional = true }
 
 [build-dependencies]
 cbindgen = "0.27"

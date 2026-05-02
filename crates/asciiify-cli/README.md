@@ -14,29 +14,48 @@ cargo install asciiify-cli
 
 Or download a prebuilt binary from [GitHub Releases](https://github.com/tomerramk/asciiify/releases).
 
+## Building from Source
+
+Requires [Rust](https://rustup.rs/).
+
+```bash
+git clone https://github.com/tomerramk/asciiify.git
+cd asciiify
+
+# Build the release binary
+cargo build --release -p asciiify-cli
+# Binary is at target/release/asciiify
+
+# Or install directly into ~/.cargo/bin
+cargo install --path crates/asciiify-cli
+```
+
 ## Usage
 
 ```bash
-# Convert image to ASCII
-asciiify image.png
+# Basic usage - convert image to ASCII
+asciiify path/to/image.png
 
-# Braille mode with custom width
-asciiify photo.jpg -m braille -w 120
+# Specify output mode
+asciiify image.jpg -m braille
 
-# Half-block mode
-asciiify logo.png -m half-block -w 60 -H 20
+# Set dimensions
+asciiify image.png -w 80 -H 25
 
 # Invert brightness
 asciiify image.png --invert
 
-# Custom character ramp
+# Custom ASCII ramp (ascii mode only)
 asciiify image.png --charset " .oO@"
 
 # Output to file
 asciiify image.png -o output.txt
 
-# Video playback (requires video feature)
-asciiify video.mp4 --fps 15
+# Video playback
+asciiify video.mp4 --fps 30
+
+# Help
+asciiify --help
 ```
 
 ## Output Modes
@@ -49,10 +68,18 @@ asciiify video.mp4 --fps 15
 
 ## Video Support
 
-Build with the `video` feature for video playback (requires FFmpeg installed):
+Video playback is included by default. FFmpeg is downloaded automatically the first time
+a video file is played.
 
 ```bash
-cargo install asciiify-cli --features video
+# Play video in the terminal
+asciiify video.mp4 --fps 30
+
+# Override frame rate
+asciiify video.mp4 --fps 15
+
+# Save all frames to a file (one frame per page)
+asciiify video.mp4 --fps 30 -o frames.txt
 ```
 
 ## License

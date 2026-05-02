@@ -4,6 +4,12 @@ use std::ptr;
 
 use asciiify_core::{ConvertOptions, OutputMode};
 
+#[cfg(feature = "video")]
+use asciiify_core::{convert_image, extract_frames, FrameIterator};
+
+#[cfg(feature = "video")]
+use rodio::{buffer::SamplesBuffer, OutputStream, Sink};
+
 fn parse_mode(mode: &str) -> OutputMode {
     match mode.to_lowercase().as_str() {
         "half-block" | "halfblock" | "block" => OutputMode::HalfBlock,
@@ -128,6 +134,152 @@ pub unsafe extern "C" fn asciiify_free(ptr: *mut c_char) {
     if !ptr.is_null() {
         drop(unsafe { CString::from_raw(ptr) });
     }
+}
+
+/// Opaque handle to a video frame iterator with associated conversion options.
+#[cfg(feature = "video")]
+pub struct AsciiifyVideo {
+    frames: FrameIterator,
+    opts: ConvertOptions,
+}
+
+/// Open a video file and return an opaque handle for frame-by-frame conversion.
+///
+/// Returns null on failure.
+///
+/// # Safety
+/// - `path` must be a valid null-terminated UTF-8 string.
+/// - `mode` may be null (defaults to "ascii").
+/// - `charset` may be null (defaults to built-in ramp).
+/// - The returned handle must be freed with `asciiify_video_close`.
+#[cfg(feature = "video")]
+#[no_mangle]
+pub unsafe extern "C" fn asciiify_video_open(
+    path: *const c_char,
+    mode: *const c_char,
+    width: u32,
+    height: u32,
+    invert: bool,
+    charset: *const c_char,
+) -> *mut AsciiifyVideo {
+    let path = match unsafe { CStr::from_ptr(path) }.to_str() {
+        Ok(s) => s,
+        Err(_) => return ptr::null_mut(),
+    };
+
+    let mode_str = if mode.is_null() {
+        "ascii"
+    } else {
+        unsafe { CStr::from_ptr(mode) }.to_str().unwrap_or("ascii")
+    };
+
+    let charset_str = if charset.is_null() {
+        None
+    } else {
+        unsafe { CStr::from_ptr(charset) }
+            .to_str()
+            .ok()
+            .map(String::from)
+    };
+
+    let opts = ConvertOptions {
+        width: if width == 0 { None } else { Some(width) },
+        height: if height == 0 { None } else { Some(height) },
+        mode: parse_mode(mode_str),
+        invert,
+        charset: charset_str,
+    };
+
+    let frames = match extract_frames(path) {
+        Ok(f) => f,
+        Err(_) => return ptr::null_mut(),
+    };
+
+    Box::into_raw(Box::new(AsciiifyVideo { frames, opts }))
+}
+
+/// Get the frames-per-second of the opened video.
+///
+/// # Safety
+/// `handle` must be a valid pointer returned by `asciiify_video_open`.
+#[cfg(feature = "video")]
+#[no_mangle]
+pub unsafe extern "C" fn asciiify_video_fps(handle: *const AsciiifyVideo) -> f64 {
+    if handle.is_null() {
+        return 0.0;
+    }
+    unsafe { &*handle }.frames.fps()
+}
+
+/// Get the next frame as an ASCII art string.
+///
+/// Returns null when there are no more frames or on error.
+/// The returned string must be freed with `asciiify_free`.
+///
+/// # Safety
+/// `handle` must be a valid pointer returned by `asciiify_video_open`.
+#[cfg(feature = "video")]
+#[no_mangle]
+pub unsafe extern "C" fn asciiify_video_next_frame(handle: *mut AsciiifyVideo) -> *mut c_char {
+    if handle.is_null() {
+        return ptr::null_mut();
+    }
+    let video = unsafe { &mut *handle };
+    match video.frames.next() {
+        Some(Ok(img)) => match convert_image(&img, &video.opts) {
+            Ok(s) => CString::new(s)
+                .map(|c| c.into_raw())
+                .unwrap_or(ptr::null_mut()),
+            Err(_) => ptr::null_mut(),
+        },
+        _ => ptr::null_mut(),
+    }
+}
+
+/// Close the video handle and free all associated resources.
+///
+/// # Safety
+/// `handle` must be a valid pointer returned by `asciiify_video_open`, or null (no-op).
+#[cfg(feature = "video")]
+#[no_mangle]
+pub unsafe extern "C" fn asciiify_video_close(handle: *mut AsciiifyVideo) {
+    if !handle.is_null() {
+        drop(unsafe { Box::from_raw(handle) });
+    }
+}
+
+/// Decode all audio from a video file and play it in a background thread.
+/// Returns immediately; audio continues in the background.
+///
+/// # Safety
+/// `path` must be a valid null-terminated UTF-8 string.
+#[cfg(feature = "video")]
+#[no_mangle]
+pub unsafe extern "C" fn asciiify_play_audio_async(path: *const c_char) {
+    let path_str = match unsafe { CStr::from_ptr(path) }.to_str() {
+        Ok(s) => s.to_string(),
+        Err(_) => return,
+    };
+    std::thread::spawn(move || {
+        let audio = match asciiify_core::decode_audio(&path_str) {
+            Ok(Some(a)) => a,
+            _ => return,
+        };
+        let (_stream, handle) = match OutputStream::try_default() {
+            Ok(s) => s,
+            Err(_) => return,
+        };
+        let sink = match Sink::try_new(&handle) {
+            Ok(s) => s,
+            Err(_) => return,
+        };
+        sink.append(SamplesBuffer::new(
+            audio.channels,
+            audio.sample_rate,
+            audio.samples,
+        ));
+        sink.sleep_until_end();
+    });
 }
 
 #[cfg(test)]

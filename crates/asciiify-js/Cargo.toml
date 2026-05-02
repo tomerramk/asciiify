@@ -7,10 +7,15 @@ authors = ["Tomer Ramkovich"]
 [lib]
 crate-type = ["cdylib"]
 
+[features]
+default = ["video"]
+video = ["asciiify-core/video", "dep:rodio"]
+
 [dependencies]
 asciiify-core = { version = "0.2.0", path = "../asciiify-core" }
 napi = { version = "2", features = ["napi6"] }
 napi-derive = "2"
+rodio = { version = "0.19", optional = true }
 
 [build-dependencies]
 napi-build = "2"
