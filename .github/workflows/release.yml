@@ -98,6 +98,8 @@ jobs:
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
+        env:
+          CFLAGS_aarch64_unknown_linux_gnu: "-march=armv8-a"
         with:
           working-directory: crates/asciiify-py
           target: ${{ matrix.target }}
