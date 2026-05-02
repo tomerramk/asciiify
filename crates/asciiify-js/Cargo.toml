@@ -1,6 +1,6 @@
 [package]
 name = "asciiify-js"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["Tomer Ramkovich"]
 
@@ -12,7 +12,7 @@ default = ["video"]
 video = ["asciiify-core/video", "dep:rodio"]
 
 [dependencies]
-asciiify-core = { version = "0.3.0", path = "../asciiify-core" }
+asciiify-core = { version = "0.4.0", path = "../asciiify-core" }
 napi = { version = "2", features = ["napi6"] }
 napi-derive = "2"
 rodio = { version = "0.19", optional = true }

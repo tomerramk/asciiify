@@ -1,6 +1,6 @@
 [package]
 name = "asciiify-cli"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "CLI tool for converting images and video to ASCII art"
 license = "MIT"
@@ -19,7 +19,7 @@ name = "asciiify"
 path = "src/main.rs"
 
 [dependencies]
-asciiify-core = { version = "0.3.0", path = "../asciiify-core" }
+asciiify-core = { version = "0.4.0", path = "../asciiify-core" }
 clap = { version = "4", features = ["derive"] }
 crossterm = "0.29"
 rodio = { version = "0.19", optional = true }
