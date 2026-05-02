@@ -109,7 +109,7 @@ jobs:
           args: --release --out ../../dist
           manylinux: ${{ matrix.manylinux }}
           before-script-linux: |
-            yum install -y alsa-lib-devel || apt-get install -y libasound2-dev || true
+            yum install -y alsa-lib-devel pkgconfig || apt-get install -y libasound2-dev pkg-config || true
             export PKG_CONFIG_ALLOW_CROSS=1
 
       - uses: actions/upload-artifact@v4
