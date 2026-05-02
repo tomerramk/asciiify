@@ -103,6 +103,8 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out ../../dist
           manylinux: auto
+          before-script-linux: |
+            yum install -y alsa-lib-devel || apt-get install -y libasound2-dev || true
 
       - uses: actions/upload-artifact@v4
         with:
