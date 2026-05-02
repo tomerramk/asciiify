@@ -98,8 +98,6 @@ jobs:
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
-        env:
-          CFLAGS_aarch64_unknown_linux_gnu: "-march=armv8-a"
         with:
           working-directory: crates/asciiify-py
           target: ${{ matrix.target }}
@@ -107,6 +105,7 @@ jobs:
           manylinux: auto
           before-script-linux: |
             yum install -y alsa-lib-devel || apt-get install -y libasound2-dev || true
+            export CFLAGS_aarch64_unknown_linux_gnu="-march=armv8-a"
 
       - uses: actions/upload-artifact@v4
         with:
