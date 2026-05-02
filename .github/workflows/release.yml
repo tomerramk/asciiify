@@ -82,14 +82,19 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64
+            manylinux: auto
           - os: ubuntu-latest
             target: aarch64
+            manylinux: manylinux_2_28
           - os: windows-latest
             target: x64
+            manylinux: auto
           - os: macos-latest
             target: x86_64
+            manylinux: auto
           - os: macos-latest
             target: aarch64
+            manylinux: auto
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -102,10 +107,9 @@ jobs:
           working-directory: crates/asciiify-py
           target: ${{ matrix.target }}
           args: --release --out ../../dist
-          manylinux: auto
+          manylinux: ${{ matrix.manylinux }}
           before-script-linux: |
             yum install -y alsa-lib-devel || apt-get install -y libasound2-dev || true
-            export CFLAGS_aarch64_unknown_linux_gnu="-march=armv8-a"
 
       - uses: actions/upload-artifact@v4
         with:
